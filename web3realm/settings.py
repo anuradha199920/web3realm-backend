@@ -97,6 +97,9 @@ DATABASES = {
     }
 }
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WISHLIST = [
+    "https://eekeyguy.github.io/web3realm/"
+]
 
 CORS_ALLOW_METHODS = [
 	'GET',
