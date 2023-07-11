@@ -1,8 +1,13 @@
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
-from .models import NFTSales, EthereumTraders, BTCTraders, AvgFees, BtcUsersData, EthereumWallets, GasFeesData
+from .models import NFTSales, EthereumTraders, BTCTraders, AvgFees, BtcUsersData, EthereumWallets, GasFeesData, \
+    NftLowestSalePrices, NftTradesByChain, EthereumL2Transactions, \
+    VolumeByPlatform, BitcoinTransaction, TradesByPlatform
 from .serializers import NFTSalesSerializer, EthereumTradersSerializer, BtcTradersSerializer, AvgFeesSerializer, \
-    BtcUsersDataSerializer, EthereumWalletsSerializer, GasFeesDataSerializer
+    BtcUsersDataSerializer, EthereumWalletsSerializer, GasFeesDataSerializer, NftLowestSalePricesSerializer, \
+    NftTradesByChainSerializer, \
+    EthereumL2TransactionsSerializer, VolumeByPlatformSerializer, BitcoinTransactionSerializer, \
+    TradesByPlatformSerializer
 
 
 @api_view(['GET'])
@@ -51,4 +56,46 @@ def ethereum_wallets_api(request):
 def gas_fees_data_api(request):
     gas_fees_data = GasFeesData.objects.all()
     serializer = GasFeesDataSerializer(gas_fees_data, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(['GET'])
+def nft_lowest_sale_prices_api(request):
+    nft_lowest_sale_prices = NftLowestSalePrices.objects.all()
+    serializer = NftLowestSalePricesSerializer(nft_lowest_sale_prices, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(['GET'])
+def nft_trades_by_chain_api(request):
+    nft_trades_by_chain = NftTradesByChain.objects.all()
+    serializer = NftTradesByChainSerializer(nft_trades_by_chain, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(['GET'])
+def trades_by_platform_api(request):
+    trades_by_platform = TradesByPlatform.objects.all()
+    serializer = TradesByPlatformSerializer(trades_by_platform, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(['GET'])
+def bitcoin_transaction_api(request):
+    bitcoin_transactions = BitcoinTransaction.objects.all()
+    serializer = BitcoinTransactionSerializer(bitcoin_transactions, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(['GET'])
+def ethereum_l2_transactions_api(request):
+    ethereum_l2_transactions = EthereumL2Transactions.objects.all()
+    serializer = EthereumL2TransactionsSerializer(ethereum_l2_transactions, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(['GET'])
+def volume_by_platform_api(request):
+    volume_by_platform = VolumeByPlatform.objects.all()
+    serializer = VolumeByPlatformSerializer(volume_by_platform, many=True)
     return JsonResponse(serializer.data, safe=False)
