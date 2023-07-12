@@ -1,9 +1,10 @@
 import requests
 from ikigaiDashboard.models import NFTSales, EthereumTraders, BTCTraders, AvgFees, BtcUsersData, EthereumWallets, \
     GasFeesData, NftLowestSalePrices, NftTradesByChain, EthereumL2Transactions, \
-    VolumeByPlatform, BitcoinTransaction, TradesByPlatform
+    VolumeByPlatform, BitcoinTransaction, TradesByPlatform, EthereumNFTCollections
 from datetime import datetime
 from django.utils import timezone
+from bs4 import BeautifulSoup
 
 
 def fetch_and_store_nft_sales():
@@ -408,18 +409,60 @@ def fetch_and_store_volume_by_platform():
         )
 
 
+# Define a function to fetch and store the NFT collections data
+def fetch_and_store_nft_collections():
+    # The URL of the API endpoint
+    api_url = 'https://api.dune.com/api/v1/query/2720612/results?api_key=piyMny0VjuHCs1Mk5KLTXCwOpclpXcvQ'
+
+    # Send a GET request to the API endpoint
+    response = requests.get(api_url)
+    # If the GET request is unsuccessful, raise an HTTPError
+    response.raise_for_status()
+
+    # Parse the JSON response from the API
+    data = response.json()
+
+    # Extract the 'rows' array from the 'result' object in the response
+    rows = data['result']['rows']
+
+    # Iterate over each object (row) in the 'rows' array
+    for row in rows:
+        # Parse the HTML string in the 'collection' and 'trade_there' field using BeautifulSoup
+        collection_html = BeautifulSoup(row['collection'], 'html.parser')
+        trade_there_html = BeautifulSoup(row['trade_there'], 'html.parser')
+
+        # Create a new EthereumNFTCollections object or update an existing one
+        # 'get_or_create' will avoid duplicate entries if called multiple times with same data
+        EthereumNFTCollections.objects.get_or_create(
+            highest_sales=row['Highest_sales'],
+            lowest_sales=row['Lowest_sales'],
+            collection=collection_html.text,  # Extract the text (name) of the collection
+            etherscan_link=collection_html.find('a')['href'],
+            # Extract the href attribute of the first (and only) anchor tag in the 'collection' field
+            owners=row['owners'],
+            supply=row['supply'],
+            blur_link=trade_there_html.find_all('a')[0]['href'],
+            # Extract the href attribute of the first anchor tag in the 'trade_there' field
+            gem_link=trade_there_html.find_all('a')[1]['href'],
+            # Extract the href attribute of the second anchor tag in the 'trade_there' field
+            uniswap_link=trade_there_html.find_all('a')[2]['href'],
+            # Extract the href attribute of the third anchor tag in the 'trade_there' field
+        )
+
+
 def fetch_and_store_data():
     # Call the functions to fetch and store data from both APIs
-    fetch_and_store_nft_sales()
-    fetch_and_store_ethereum_trade()
-    fetch_btc_trades_data()
-    fetch_and_store_avg_fees()
-    fetch_and_store_btc_users_data()
-    fetch_and_store_ethereum_wallets()
-    fetch_and_store_gas_fees_data()
-    fetch_and_store_nft_lowest_sale_prices()
-    fetch_and_store_nft_trades_by_chain()
-    fetch_and_store_trades_by_platform()
-    fetch_and_store_bitcoin_transactions()
-    fetch_and_store_ethereum_l2_transactions()
-    fetch_and_store_volume_by_platform()
+    # fetch_and_store_nft_sales()
+    # fetch_and_store_ethereum_trade()
+    # fetch_btc_trades_data()
+    # fetch_and_store_avg_fees()
+    # fetch_and_store_btc_users_data()
+    # fetch_and_store_ethereum_wallets()
+    # fetch_and_store_gas_fees_data()
+    # fetch_and_store_nft_lowest_sale_prices()
+    # fetch_and_store_nft_trades_by_chain()
+    # fetch_and_store_trades_by_platform()
+    # fetch_and_store_bitcoin_transactions()
+    # fetch_and_store_ethereum_l2_transactions()
+    # fetch_and_store_volume_by_platform()
+    fetch_and_store_nft_collections()

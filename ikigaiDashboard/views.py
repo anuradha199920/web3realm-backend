@@ -2,12 +2,12 @@ from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from .models import NFTSales, EthereumTraders, BTCTraders, AvgFees, BtcUsersData, EthereumWallets, GasFeesData, \
     NftLowestSalePrices, NftTradesByChain, EthereumL2Transactions, \
-    VolumeByPlatform, BitcoinTransaction, TradesByPlatform
+    VolumeByPlatform, BitcoinTransaction, TradesByPlatform, EthereumNFTCollections
 from .serializers import NFTSalesSerializer, EthereumTradersSerializer, BtcTradersSerializer, AvgFeesSerializer, \
     BtcUsersDataSerializer, EthereumWalletsSerializer, GasFeesDataSerializer, NftLowestSalePricesSerializer, \
     NftTradesByChainSerializer, \
     EthereumL2TransactionsSerializer, VolumeByPlatformSerializer, BitcoinTransactionSerializer, \
-    TradesByPlatformSerializer
+    TradesByPlatformSerializer, EthereumNFTCollectionsSerializer
 
 
 @api_view(['GET'])
@@ -98,4 +98,11 @@ def ethereum_l2_transactions_api(request):
 def volume_by_platform_api(request):
     volume_by_platform = VolumeByPlatform.objects.all()
     serializer = VolumeByPlatformSerializer(volume_by_platform, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(['GET'])
+def nft_collections_api(request):
+    nft_collections = EthereumNFTCollections.objects.all()
+    serializer = EthereumNFTCollectionsSerializer(nft_collections, many=True)
     return JsonResponse(serializer.data, safe=False)

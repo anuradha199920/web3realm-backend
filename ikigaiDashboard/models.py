@@ -143,3 +143,19 @@ class VolumeByPlatform(models.Model):
 
     class Meta:
         db_table = 'volumebyplatform'
+
+
+class EthereumNFTCollections(models.Model):
+    highest_sales = models.DecimalField(max_digits=10, decimal_places=3)
+    lowest_sales = models.DecimalField(max_digits=10, decimal_places=3)
+    collection = models.CharField(max_length=100)
+    etherscan_link = models.URLField(max_length=200)
+    owners = models.IntegerField()
+    supply = models.IntegerField()
+    blur_link = models.URLField(max_length=200)
+    gem_link = models.URLField(max_length=200)
+    uniswap_link = models.URLField(max_length=200)
+    objects = models.Manager()
+
+    class Meta:
+        db_table = 'ethereum_nft_collections'

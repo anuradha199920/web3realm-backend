@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import NFTSales, EthereumTraders, BTCTraders, AvgFees, BtcUsersData, EthereumWallets, GasFeesData, \
     NftLowestSalePrices, NftTradesByChain, EthereumL2Transactions, \
-    VolumeByPlatform, BitcoinTransaction, TradesByPlatform
+    VolumeByPlatform, BitcoinTransaction, TradesByPlatform, EthereumNFTCollections
 
 
 class NFTSalesSerializer(serializers.ModelSerializer):
@@ -79,4 +79,10 @@ class EthereumL2TransactionsSerializer(serializers.ModelSerializer):
 class VolumeByPlatformSerializer(serializers.ModelSerializer):
     class Meta:
         model = VolumeByPlatform
+        fields = '__all__'
+
+
+class EthereumNFTCollectionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EthereumNFTCollections
         fields = '__all__'
