@@ -1,6 +1,6 @@
 import requests
 from ikigaiDashboard.models import BTCTraders, AvgFees, GasFeesData, \
-    VolumeByPlatform, TradesByPlatform, EthereumNFTCollections, EthereumTraders
+    VolumeByPlatform, TradesByPlatform, EthereumTraders, NFTStats, NFTStatsByPlatform
 from datetime import datetime
 from django.utils import timezone
 from bs4 import BeautifulSoup
@@ -184,10 +184,11 @@ def fetch_and_store_volume_by_platform():
         )
 
 
-# Define a function to fetch and store the NFT collections data
-def fetch_and_store_nft_collections():
+# Define a function to fetch and store the NFT stats data
+
+def fetch_and_store_nft_stats():
     # The URL of the API endpoint
-    api_url = 'https://api.dune.com/api/v1/query/2720612/results?api_key=piyMny0VjuHCs1Mk5KLTXCwOpclpXcvQ'
+    api_url = 'https://api.dune.com/api/v1/query/2774925/results?api_key=%20piyMny0VjuHCs1Mk5KLTXCwOpclpXcvQ'
 
     # Send a GET request to the API endpoint
     response = requests.get(api_url)
@@ -202,35 +203,102 @@ def fetch_and_store_nft_collections():
 
     # Iterate over each object (row) in the 'rows' array
     for row in rows:
-        # Parse the HTML string in the 'collection' and 'trade_there' field using BeautifulSoup
-        collection_html = BeautifulSoup(row['collection'], 'html.parser')
+        # Parse the HTML string in the 'trade_there' field using BeautifulSoup
         trade_there_html = BeautifulSoup(row['trade_there'], 'html.parser')
-
-        # Create a new EthereumNFTCollections object or update an existing one
+        # Create a new NFTStats object or update an existing one
         # 'get_or_create' will avoid duplicate entries if called multiple times with same data
-        EthereumNFTCollections.objects.get_or_create(
-            highest_sales=row['Highest_sales'],
-            lowest_sales=row['Lowest_sales'],
-            collection=collection_html.text,  # Extract the text (name) of the collection
-            etherscan_link=collection_html.find('a')['href'],
-            # Extract the href attribute of the first (and only) anchor tag in the 'collection' field
+        NFTStats.objects.get_or_create(
+            highest_sale=row['Highest_Sale'],
+            lowest_sale=row['Lowest_Sale'],
+            buyers=row['buyers'],
+            collection=row['collection'],
             owners=row['owners'],
+            sales_count=row['sales'],
             supply=row['supply'],
+            sellers=row['sellers'],
             blur_link=trade_there_html.find_all('a')[0]['href'],
             # Extract the href attribute of the first anchor tag in the 'trade_there' field
             gem_link=trade_there_html.find_all('a')[1]['href'],
             # Extract the href attribute of the second anchor tag in the 'trade_there' field
             uniswap_link=trade_there_html.find_all('a')[2]['href'],
             # Extract the href attribute of the third anchor tag in the 'trade_there' field
+            organic_volume=row['organic_volume'],
+            wash_volume=row['wash_volume'],
+            wash_volume_percentage=row['wash_volume_percentage']
+        )
+
+
+def fetch_and_store_nft_stats_by_platform():
+    # The URL of the API endpoint
+    api_url = 'https://api.dune.com/api/v1/query/2772645/results?api_key=%20piyMny0VjuHCs1Mk5KLTXCwOpclpXcvQ'
+    date_format = "%Y-%m-%d %H:%M:%S.%f %Z"
+    # Send a GET request to the API endpoint
+    response = requests.get(api_url)
+    # If the GET request is unsuccessful, raise an HTTPError
+    response.raise_for_status()
+
+    # Parse the JSON response from the API
+    data = response.json()
+
+    # Extract the 'rows' array from the 'result' object in the response
+    rows = data['result']['rows']
+
+    # Iterate over each object (row) in the 'rows' array
+    for row in rows:
+        naive_time = datetime.strptime(row['time'], date_format)
+        aware_time = timezone.make_aware(naive_time, timezone.utc)
+        NFTStatsByPlatform.objects.get_or_create(
+            highest_sale=row['Highest_Sale'],
+            buyers=row['buyers'],
+            project=row['project'],
+            sales_count=row['sales'],
+            sellers=row['sellers'],
+            organic_volume=row['organic_volume'],
+            wash_volume=row['wash_volume'],
+            wash_volume_percentage=row['wash_volume_percentage'],
+            date=aware_time
+        )
+
+
+def fetch_and_store_market_overview():
+    # The URL of the API endpoint
+    api_url = 'https://api.dune.com/api/v1/query/2775171/results?api_key=%20piyMny0VjuHCs1Mk5KLTXCwOpclpXcvQ'
+    date_format = "%Y-%m-%d %H:%M:%S.%f %Z"
+    # Send a GET request to the API endpoint
+    response = requests.get(api_url)
+    # If the GET request is unsuccessful, raise an HTTPError
+    response.raise_for_status()
+
+    # Parse the JSON response from the API
+    data = response.json()
+
+    # Extract the 'rows' array from the 'result' object in the response
+    rows = data['result']['rows']
+
+    # Iterate over each object (row) in the 'rows' array
+    for row in rows:
+        naive_time = datetime.strptime(row['time'], date_format)
+        aware_time = timezone.make_aware(naive_time, timezone.utc)
+        NFTStatsByPlatform.objects.get_or_create(
+            highest_sale=row['Highest_Sale'],
+            buyers=row['buyers'],
+            organic_volume=row['organic_volume'],
+            sales_count=row['sales'],
+            sellers=row['sellers'],
+            wash_volume=row['wash_volume'],
+            wash_volume_percentage=row['wash_volume_percentage'],
+            date=aware_time
         )
 
 
 def fetch_and_store_data():
     # Call the functions to fetch and store data from both APIs
-    fetch_and_store_ethereum_trade()
-    fetch_btc_trades_data()
-    fetch_and_store_avg_fees()
-    fetch_and_store_gas_fees_data()
-    fetch_and_store_trades_by_platform()
-    fetch_and_store_volume_by_platform()
-    fetch_and_store_nft_collections()
+    # fetch_and_store_ethereum_trade()
+    # fetch_btc_trades_data()
+    # fetch_and_store_avg_fees()
+    # fetch_and_store_gas_fees_data()
+    # fetch_and_store_trades_by_platform()
+    # fetch_and_store_volume_by_platform()
+    # fetch_and_store_nft_stats()
+    fetch_and_store_market_overview()
+    # fetch_and_store_nft_stats_by_platform()
