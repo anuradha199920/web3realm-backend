@@ -1,6 +1,6 @@
 import requests
 from ikigaiDashboard.models import BTCTraders, AvgFees, GasFeesData, \
-    VolumeByPlatform, TradesByPlatform, EthereumTraders, NFTStats, NFTStatsByPlatform
+    VolumeByPlatform, TradesByPlatform, EthereumTraders, NFTStats, NFTStatsByPlatform, MarketOverview
 from datetime import datetime
 from django.utils import timezone
 from bs4 import BeautifulSoup
@@ -279,11 +279,11 @@ def fetch_and_store_market_overview():
     for row in rows:
         naive_time = datetime.strptime(row['time'], date_format)
         aware_time = timezone.make_aware(naive_time, timezone.utc)
-        NFTStatsByPlatform.objects.get_or_create(
+        MarketOverview.objects.get_or_create(
             highest_sale=row['Highest_Sale'],
             buyers=row['buyers'],
             organic_volume=row['organic_volume'],
-            sales_count=row['sales'],
+            sales=row['sales'],
             sellers=row['sellers'],
             wash_volume=row['wash_volume'],
             wash_volume_percentage=row['wash_volume_percentage'],
@@ -299,6 +299,6 @@ def fetch_and_store_data():
     # fetch_and_store_gas_fees_data()
     # fetch_and_store_trades_by_platform()
     # fetch_and_store_volume_by_platform()
-    fetch_and_store_nft_stats()
+    # fetch_and_store_nft_stats()
     fetch_and_store_market_overview()
-    fetch_and_store_nft_stats_by_platform()
+    # fetch_and_store_nft_stats_by_platform()

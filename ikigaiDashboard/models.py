@@ -128,6 +128,6 @@ class MarketOverview(models.Model):
     date = models.DateTimeField()
     wash_volume = models.DecimalField(max_digits=20, decimal_places=8)
     wash_volume_percentage = models.DecimalField(max_digits=20, decimal_places=8)
-
+    objects = models.Manager()
     class Meta:
         db_table = 'market_overview'
