@@ -103,6 +103,10 @@ CORS_ORIGIN_WISHLIST = [
     "https://eekeyguy.github.io/web3realm/"
 ]
 
+CRONJOBS = [
+    ('*/5 * * * *', 'django.core.management.call_command', ['fetch_data'])
+]
+
 CORS_ALLOW_METHODS = [
 	'GET',
 	'POST'
