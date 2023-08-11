@@ -1,11 +1,22 @@
-from rest_framework.decorators import api_view
-from django.http import JsonResponse
 from .models import BTCTraders, AvgFees, GasFeesData, \
     VolumeByPlatform, TradesByPlatform, EthereumNFTCollections, EthereumTraders, NFTStats, NFTStatsByPlatform, \
     MarketOverview
 from .serializers import BtcTradersSerializer, AvgFeesSerializer, GasFeesDataSerializer, \
-    VolumeByPlatformSerializer, TradesByPlatformSerializer, EthereumNFTCollectionsSerializer, EthereumTradersSerializer, \
+    VolumeByPlatformSerializer, TradesByPlatformSerializer, EthereumNFTCollectionsSerializer, \
     NFTStatsSerializer, NFTStatsByPlatformSerializer, MarketOverviewSerializer
+from .queryGenerator import get_query
+from django.http import JsonResponse, HttpResponse
+from rest_framework.decorators import api_view
+from .models import EthereumTraders
+from .serializers import EthereumTradersSerializer
+
+
+# @api_view(['POST'])
+# def get_query_by_text(request):
+#     # Get the plain text data from the POST request
+#     user_input = request.body.decode('utf-8')
+#
+#     return JsonResponse(get_query("Find"), status=201)  # Return a 201 Created status
 
 
 @api_view(['GET'])

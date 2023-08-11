@@ -13,5 +13,6 @@ urlpatterns = [
     path('ethereum-nft-collections/', nft_collections_api, name='ethereum_nft_collections'),
     path('nft-stats', nft_stats_api, name='nft_stats_api'),
     path('nft-stats-by-platform', nft_stats_by_platform_api, name='nft_stats_by_platform_api'),
-    path('market-overview', market_overview_api, name='market_overview_api')
+    path('market-overview', market_overview_api, name='market_overview_api'),
+    # path('get-query-by-text', get_query_by_text, name='get_query_by_text')
 ]
