@@ -104,7 +104,7 @@ CORS_ORIGIN_WISHLIST = [
 ]
 
 CRONJOBS = [
-    ('*/5 * * * *', 'django.core.management.call_command', ['fetch_data'])
+    ('0 2 * * *', 'django.core.management.call_command', ['fetch_data'])
 ]
 
 CORS_ALLOW_METHODS = [
